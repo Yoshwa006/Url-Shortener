@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #007acc;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      background-color: #007acc;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #005f99;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>URL Shortener</h1>
+  <form id="urlShortenerForm">
+    <label for="longUrl">Enter Long URL:</label>
+    <input type="text" id="longUrl" placeholder="https://example.com" required>
+
+    <label for="shortId">Enter Short URL ID:</label>
+    <input type="text" id="shortId" placeholder="e.g., short123" required>
+
+    <button type="button" onclick="addUrl()">Add URL</button>
+
+    <label for="shortUrlRetrieve">Retrieve Long URL:</label>
+    <input type="text" id="shortUrlRetrieve" placeholder="Enter Short ID">
+
+    <button type="button" onclick="retrieveUrl()">Retrieve Long URL</button>
+  </form>
+</div>
+
+<script>
+  const API_BASE_URL = "http://localhost:8080/api";
+
+  // Function to add a new URL mapping
+ // Function to add a new URL mapping
+async function addUrl() {
+  const longUrl = document.getElementById('longUrl').value;
+  const shortId = document.getElementById('shortId').value;
+
+  if (!longUrl || !shortId) {
+    alert("Please fill in both fields.");
+    return;
+  }
+
+  const payload = {
+    originalUrl: longUrl,
+    shortUrl: shortId
+  };
+
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.ok) {
+      const result = await response.text();
+      alert(result);
+    } else {
+      alert("Failed to add URL. Please try again.");
+    }
+  } catch (error) {
+    alert("Error adding URL. Please try again.");
+  }
+}
+
+// Function to retrieve the original URL
+async function retrieveUrl() {
+  const shortId = document.getElementById('shortUrlRetrieve').value;
+
+  if (!shortId) {
+    alert("Please enter a short URL ID.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/url/${shortId}`);
+    const result = await response.text();
+
+    if (result === "Short URL not found!") {
+      alert(result);
+    } else {
+      alert(`Original URL: ${result}`);
+    }
+  } catch (error) {
+    alert("Error retrieving URL. Please try again.");
+  }
+}
+
+</script>
+</body>
+</html>

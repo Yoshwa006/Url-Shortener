@@ -27,8 +27,8 @@ public class Controller {
     // Add a new URL mapping
     @PostMapping()
     public String addUrl(@RequestBody Model model) {
-        if((model.getShortUrl() == null) || (model.getShortUrl() == null)){
-            return "url cannot be null !";
+        if (model.getShortUrl() == null || model.getOriginalUrl() == null) {
+            return "URL and Short URL cannot be null!";
         }
         urlMap.put(model.getShortUrl(), model.getOriginalUrl());
         return "URL added successfully!";
